@@ -11,7 +11,7 @@ const byExactCI = new Map();    // exact case-insensitive -> [entries]
 const bySearch = new Map();     // normalized (diacritics removed, lowercase) -> [entries]
 
 // remove accents/diacritics for normalized searches
-function stripDiacritics(s) {
+export function stripDiacritics(s) {
   // Normalize to NFD (decomposed), then strip combining marks
   return s.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
 }
@@ -61,6 +61,16 @@ export function getById(id) {
   return byId.get(Number(id)) || null;
 }
 
+export function getByIdRange(n) {
+  if (isNaN(n) || n < 1) return [];
+  const results = [];
+  for (let i = 1; i <= n; i++) {
+    const entry = byId.get(i);
+    if (entry) results.push(entry);
+  }
+  return results;
+}
+
 export function getByExactWord(word) {
   if (!word) return null;
   const keyNfc = word.normalize('NFC');
@@ -68,6 +78,17 @@ export function getByExactWord(word) {
   const keyCi = keyNfc.toLowerCase();
   if (byExactCI.has(keyCi)) return byExactCI.get(keyCi);       // case-insensitive
   return null;
+}
+
+export function getByFirstLetter(letter) {
+  if (!letter || letter.length !== 1) return [];
+  const normLetter = stripDiacritics(letter).toLowerCase();
+  const results = [];
+  for (const entry of byId.values()) {
+    const firstChar = stripDiacritics(entry.word.charAt(0)).toLowerCase();
+    if (firstChar === normLetter) results.push(entry);
+  }
+  return results;
 }
 
 export function getByNormalized(word) {
