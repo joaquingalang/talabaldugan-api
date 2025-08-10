@@ -1,6 +1,6 @@
 // server.js
 import express from 'express';
-import { loadCSV, getById, getByExactWord, getByNormalized } from './words.js';
+import { loadCSV, getById, getByIdRange, getByExactWord, getByNormalized, getByFirstLetter } from './words.js';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -14,6 +14,14 @@ const PORT = process.env.PORT || 3000;
     const item = getById(req.params.id);
     if (!item) return res.status(404).json({ error: 'Not found' });
     res.json(item);
+  });
+
+  // Fetch all entries with id from 1 to n
+  app.get('/api/ids/:n', (req, res) => {
+    const n = Number(req.params.n);
+    if (isNaN(n) || n < 1) return res.status(400).json({ error: 'Invalid n' });
+    const entries = getByIdRange(n);
+    res.json(entries);
   });
 
   // Try to fetch by exact word first, fallback to normalized
@@ -37,6 +45,14 @@ const PORT = process.env.PORT || 3000;
     return res.status(404).json({ error: 'Not found' });
   });
 
+  app.get('/api/starts/:letter', (req, res) => {
+    const letter = req.params.letter;
+    if (!letter || letter.length !== 1) return res.status(400).json({ error: 'Invalid letter' });
+    const entries = getByFirstLetter(letter);
+    res.json(entries);
+  });
+
+
   // A dedicated normalized search endpoint (always returns array)
   app.get('/api/search/:query', (req, res) => {
     const results = getByNormalized(req.params.query);
@@ -44,6 +60,6 @@ const PORT = process.env.PORT || 3000;
   });
 
   app.listen(PORT, () => {
-    console.log(`🚀 Server listening on http://localhost:${PORT}`);
+    console.log(`Server started on http://localhost:${PORT}`);
   });
 })();
