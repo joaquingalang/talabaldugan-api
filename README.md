@@ -6,7 +6,7 @@ Base URL: `https://talabaldugan-api.onrender.com`
 
 ## Endpoints
 
-### Get word by numeric ID
+### 1. Get word by numeric ID
 
 ```
 GET /api/id/:id
@@ -29,7 +29,7 @@ Output:
 ```
 
 
-### Get word by exact or normalized match
+### 2. Get word by exact or normalized match
 
 ```
 GET /api/word/:word
@@ -52,6 +52,49 @@ Output:
   }
 ]
 ```
+
+### 3. Get entries from ID 1 to n
+
+```
+GET /api/ids/:n
+```
+
+Example:
+
+```
+https://talabaldugan-api.onrender.com/api/ids/3
+```
+
+Output:
+```
+[
+  { "id": 1, "word": "abiás", "definition": "..." },
+  { "id": 2, "word": "abú", "definition": "..." },
+  { "id": 3, "word": "adál", "definition": "..." }
+]
+```
+
+### 4. Get all words starting with a specific letter
+
+```
+GET /api/starts/:letter
+```
+
+Example:
+
+```
+https://talabaldugan-api.onrender.com/api/starts/a
+```
+
+Output:
+```
+[
+  { "id": 1, "word": "abiás", "definition": "..." },
+  { "id": 2, "word": "abú", "definition": "..." },
+  { "id": 3, "word": "adál", "definition": "..." }
+]
+```
+
 
 ## Source
 
